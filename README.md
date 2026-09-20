@@ -125,19 +125,25 @@ automated), plus a near-miss negative that's superficially similar but
 doesn't actually violate the rule. Each gets checked against the full
 accumulated rule store for real.
 
-Run against 40 real fix commits from `axios` (36 extracted rules), sampling
-15 for reintroduction:
+Run against 40 real fix commits each from `axios` (36 extracted rules) and
+`zod` (40 extracted rules), sampling 15 per repo for reintroduction:
 
-- **Caught (WARN or BLOCK): 13/14 (92.9%)**, 7 of those at BLOCK-level
-  confidence (≥0.9)
-- **False positives on near-miss negatives: 1/14 (7.1%)** — and that one
-  only reached WARN (0.74), never BLOCK
-- **Latency: p50 960ms, p95 1048ms** against the real 36-rule store
+| | axios (14 cases) | zod (15 cases) | combined (29 cases) |
+|---|---|---|---|
+| Caught (WARN or BLOCK) | 13/14 (92.9%) | 15/15 (100%) | 28/29 (96.6%) |
+| ...of which BLOCK-level (≥0.9) | 7/14 | 12/15 | 19/29 (65.5%) |
+| False positives on near-misses | 1/14 (7.1%) | 3/15 (20.0%) | 4/29 (13.8%) |
+| ...of which false **BLOCKs** | 0 | 0 | **0/29 (0%)** |
+| Latency p50 | 960ms | 964ms | ~960ms |
 
-One genuine miss is disclosed rather than dropped: a synchronous
-request-interceptor control-flow bug scored only 0.53 — a real limit of the
-approach on subtler control-flow mistakes vs. the more common "missing a
-check before doing X" pattern.
+The number that matters most for whether a team would actually tolerate this
+running in their commit path — the BLOCK threshold (≥0.9) never fired
+incorrectly on a clean or near-miss diff, in either repo. The false-positive
+noise that does exist stays at WARN-level (0.63–0.74), which is disclosed
+rather than dropped, along with one genuine miss: a synchronous
+request-interceptor control-flow bug in axios scored only 0.53 — a real
+limit on subtler control-flow mistakes vs. the more common "missing a check
+before doing X" pattern.
 
 For a fuller academic version of harness 1, swap `mineFixCommits` for
 `src/eval/apacheJitLoader.ts`, which loads the labeled ApacheJIT /
