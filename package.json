@@ -1,0 +1,24 @@
+{
+  "name": "precedent",
+  "version": "0.1.0",
+  "description": "Turns bug fixes into a live commit-time gate: every merged fix becomes a rule, every local commit is checked against all of them in one fast parallel Jev call.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "extract": "tsx src/extract/index.ts",
+    "gate": "tsx src/gate/index.ts",
+    "eval": "tsx src/eval/runEval.ts",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@typesafe-ai/sdk": "^0.6.0",
+    "simple-git": "^3.27.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "husky": "^9.1.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
