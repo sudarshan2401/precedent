@@ -30,7 +30,12 @@ async function main() {
     return;
   }
 
-  const repo = execSync("git config --get remote.origin.url", { encoding: "utf-8" }).trim() || "local";
+  let repo = "local";
+  try {
+    repo = execSync("git config --get remote.origin.url", { encoding: "utf-8" }).trim() || "local";
+  } catch {
+    // no remote configured
+  }
   appendRule(RULES_PATH, {
     id: randomUUID(),
     rule,

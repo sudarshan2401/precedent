@@ -12,7 +12,7 @@ function isFixMessage(message: string): boolean {
 }
 
 function parseLog(repoPath: string): MinedCommit[] {
-  const log = execSync(`git -C ${repoPath} log --all --pretty=format:%H|%P|%aI|%s`, {
+  const log = execSync(`git -C ${repoPath} log --all --pretty=format:"%H|%P|%aI|%s"`, {
     encoding: "utf-8",
     maxBuffer: 50_000_000,
   });
