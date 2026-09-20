@@ -1,5 +1,8 @@
 import { execSync } from "node:child_process";
+import { loadEnvFile } from "../loadEnv.js";
 import { loadRules } from "../ruleStore.js";
+
+loadEnvFile();
 import { JevGateClient, MockGateClient } from "./jevClient.js";
 import type { GateClient, GateResult } from "../types.js";
 

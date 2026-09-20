@@ -1,8 +1,11 @@
 import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { AnthropicExtractionClient, MockExtractionClient } from "./llmClient.js";
+import { loadEnvFile } from "../loadEnv.js";
 import { appendRule } from "../ruleStore.js";
 import type { ExtractionClient } from "../types.js";
+
+loadEnvFile();
 
 const RULES_PATH = ".lessons/rules.jsonl";
 
