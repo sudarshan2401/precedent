@@ -1,16 +1,11 @@
 import type { BacktestReport } from "./backtest.js";
 
 export function renderReport(report: BacktestReport): string {
-  const { cases, truePositives, falseNegatives, falsePositives, trueNegatives, totalRulesExtracted } = report;
+  const { cases, truePositives, falseNegatives, falsePositives, trueNegatives, totalRulesExtracted, fixCommitsExamined } =
+    report;
 
   const recurrenceCases = cases.filter((c) => c.isRecurrence);
-  const withPrecedent = recurrenceCases.filter((c) => c.rulesAvailableAtTime > 0);
-  const firstTime = recurrenceCases.filter((c) => c.rulesAvailableAtTime === 0);
-
-  const recallOverall = recurrenceCases.length ? truePositives / recurrenceCases.length : 0;
-  const recallWithPrecedent = withPrecedent.length
-    ? withPrecedent.filter((c) => c.flagged).length / withPrecedent.length
-    : 0;
+  const recall = recurrenceCases.length ? truePositives / recurrenceCases.length : 0;
 
   const cleanTotal = falsePositives + trueNegatives;
   const falsePositiveRate = cleanTotal > 0 ? falsePositives / cleanTotal : 0;
@@ -24,13 +19,13 @@ export function renderReport(report: BacktestReport): string {
 
   return `# Precedent recurrence backtest
 
-- Bug-inducing commits evaluated: ${recurrenceCases.length} (${firstTime.length} first-time, ${withPrecedent.length} had an applicable rule already on record)
-- Clean commits sampled as controls: ${cases.length - recurrenceCases.length}
+- Fix commits examined: ${fixCommitsExamined}
+- Of those, genuine recurrences of an earlier, different fix's rule (semantic duplicate check, not just "some rule existed"): ${recurrenceCases.length}
+- Clean commits sampled as controls: ${cases.length - fixCommitsExamined}
 - Rules extracted over the full backtest: ${totalRulesExtracted}
 
-## Recall
-- Overall (includes bugs with no prior rule to match): ${truePositives}/${recurrenceCases.length} (${(recallOverall * 100).toFixed(1)}%)
-- Restricted to cases where a rule already existed: ${withPrecedent.filter((c) => c.flagged).length}/${withPrecedent.length} (${(recallWithPrecedent * 100).toFixed(1)}%)
+## Recall (of genuine recurrences only — first-time bugs have no precedent to catch and are excluded)
+- Caught: ${truePositives}/${recurrenceCases.length} (${(recall * 100).toFixed(1)}%)
 - Missed: ${falseNegatives}
 
 ## Precision / noise

@@ -7,7 +7,10 @@ export interface MinedCommit {
   message: string;
 }
 
+const NON_LOGIC_SCOPES = /^fix\((docs?|ci|readme|website|chore)\)/i;
+
 function isFixMessage(message: string): boolean {
+  if (NON_LOGIC_SCOPES.test(message)) return false;
   return /^fix(\(.+\))?:/i.test(message) || /\bfix(es|ed)?\b/i.test(message) || /\bcloses?\s+#\d+/i.test(message);
 }
 

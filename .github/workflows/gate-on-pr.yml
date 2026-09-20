@@ -1,0 +1,25 @@
+name: precedent gate
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install
+
+      - name: Check the PR diff against every accumulated lesson
+        env:
+          JEV_API_KEY: ${{ secrets.JEV_API_KEY }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: npm run gate

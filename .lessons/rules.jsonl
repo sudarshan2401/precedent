@@ -1,1 +1,2 @@
 {"id":"65968137-44d9-48f3-8a72-4afd9e8bda01","rule":"Don't repeat the mistake fixed in \"fix: guard against empty diff crashing the gate\".","sourceRepo":"local","sourceCommit":"f9d4d34d45e78d48e1fd7d79b633b6cca9d66b62","createdAt":"2026-09-20T11:05:07.527Z"}
+{"id":"0106d5c5-078a-4ce9-a4df-7cfa90d04d4d","rule":"Don't process webhook events without checking for prior execution/idempotency, it caused duplicate order confirmation emails on retries.","sourceRepo":"local","sourceCommit":"0699c192abdb0ebfdaa09850c70eff752c2159e5","createdAt":"2026-09-20T11:17:19.706Z"}

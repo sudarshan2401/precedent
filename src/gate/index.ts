@@ -24,10 +24,21 @@ export async function runGate(diff: string, rulesPath = RULES_PATH): Promise<Gat
   return { verdict, matches: [...blocking, ...warning], latencyMs };
 }
 
+function getDiffToCheck(): string {
+  // In a PR workflow there's nothing staged — diff against the PR's base branch instead.
+  if (process.env.GITHUB_BASE_REF) {
+    return execSync(`git diff origin/${process.env.GITHUB_BASE_REF}...HEAD`, {
+      encoding: "utf-8",
+      maxBuffer: 10_000_000,
+    });
+  }
+  return execSync("git diff --cached", { encoding: "utf-8", maxBuffer: 10_000_000 });
+}
+
 async function main() {
-  const diff = execSync("git diff --cached", { encoding: "utf-8", maxBuffer: 10_000_000 });
+  const diff = getDiffToCheck();
   if (!diff.trim()) {
-    console.log("[precedent] No staged changes.");
+    console.log("[precedent] No changes to check.");
     return;
   }
 

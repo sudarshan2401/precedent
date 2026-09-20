@@ -8,6 +8,7 @@
     "extract": "tsx src/extract/index.ts",
     "gate": "tsx src/gate/index.ts",
     "eval": "tsx src/eval/runEval.ts",
+    "eval:reintro": "tsx src/eval/reintroEval.ts",
     "prepare": "husky"
   },
   "dependencies": {

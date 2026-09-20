@@ -1,0 +1,39 @@
+name: precedent extract
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install
+
+      - name: Turn this merge into a rule, if it's a fix
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run extract
+
+      - name: Commit the rule back to main, if one was added
+        run: |
+          if ! git diff --quiet -- .lessons/rules.jsonl; then
+            git config user.name "precedent-bot"
+            git config user.email "precedent-bot@users.noreply.github.com"
+            git add .lessons/rules.jsonl
+            git commit -m "chore(precedent): record lesson from ${{ github.sha }}"
+            git push
+          else
+            echo "No new rule."
+          fi

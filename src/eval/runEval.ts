@@ -6,8 +6,9 @@ import { renderReport } from "./report.js";
 
 async function main() {
   const repoPath = process.argv[2];
+  const limit = process.argv[3] ? Number(process.argv[3]) : undefined;
   if (!repoPath) {
-    console.error("Usage: npm run eval -- <path-to-local-git-repo>");
+    console.error("Usage: npm run eval -- <path-to-local-git-repo> [maxCommits]");
     process.exit(1);
   }
 
@@ -22,7 +23,7 @@ async function main() {
     console.log("[precedent] Running in mock mode — set ANTHROPIC_API_KEY and JEV_API_KEY for real numbers.\n");
   }
 
-  const report = await runBacktest({ repoPath, extraction, gate });
+  const report = await runBacktest({ repoPath, extraction, gate, maxCommits: limit });
   console.log(renderReport(report));
 }
 
