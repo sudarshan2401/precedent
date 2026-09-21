@@ -2,3 +2,8 @@ node_modules/
 dist/
 .env
 .eval-repos/
+.eval-logs/
+demo.gif
+demo.mp4
+demo.cast
+demo-script.sh
