@@ -3,6 +3,8 @@ dist/
 .env
 .eval-repos/
 .eval-logs/
+.DS_Store
+brag-output/
 demo.gif
 demo.mp4
 demo.cast
