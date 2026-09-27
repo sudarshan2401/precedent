@@ -125,25 +125,28 @@ automated), plus a near-miss negative that's superficially similar but
 doesn't actually violate the rule. Each gets checked against the full
 accumulated rule store for real.
 
-Run against 40 real fix commits each from `axios` (36 extracted rules) and
-`zod` (40 extracted rules), sampling 15 per repo for reintroduction:
+Run against 40 real fix commits each from `axios` (36 extracted rules), `zod`
+(40 extracted rules), and `vercel/ai` (40 extracted rules), sampling 15 per
+repo for reintroduction:
 
-| | axios (14 cases) | zod (15 cases) | combined (29 cases) |
-|---|---|---|---|
-| Caught (WARN or BLOCK) | 13/14 (92.9%) | 15/15 (100%) | 28/29 (96.6%) |
-| ...of which BLOCK-level (≥0.9) | 7/14 | 12/15 | 19/29 (65.5%) |
-| False positives on near-misses | 1/14 (7.1%) | 3/15 (20.0%) | 4/29 (13.8%) |
-| ...of which false **BLOCKs** | 0 | 0 | **0/29 (0%)** |
-| Latency p50 | 960ms | 964ms | ~960ms |
+| | axios (14 cases) | zod (15 cases) | vercel/ai (15 cases) | combined (44 cases) |
+|---|---|---|---|---|
+| Caught (WARN or BLOCK) | 13/14 (92.9%) | 15/15 (100%) | 15/15 (100%) | 43/44 (97.7%) |
+| ...of which BLOCK-level (≥0.9) | 7/14 | 12/15 | 11/15 | 30/44 (68.2%) |
+| False positives on near-misses | 1/14 (7.1%) | 3/15 (20.0%) | 2/15 (13.3%) | 6/44 (13.6%) |
+| ...of which false **BLOCKs** | 0 | 0 | 1 | **1/44 (2.3%)** |
+| Latency p50 | 960ms | 964ms | 913ms | ~945ms |
 
-The number that matters most for whether a team would actually tolerate this
-running in their commit path — the BLOCK threshold (≥0.9) never fired
-incorrectly on a clean or near-miss diff, in either repo. The false-positive
-noise that does exist stays at WARN-level (0.63–0.74), which is disclosed
-rather than dropped, along with one genuine miss: a synchronous
-request-interceptor control-flow bug in axios scored only 0.53 — a real
-limit on subtler control-flow mistakes vs. the more common "missing a check
-before doing X" pattern.
+Two things worth disclosing rather than smoothing over. First, a genuine
+miss: a synchronous request-interceptor control-flow bug in axios scored
+only 0.53 — a real limit on subtler control-flow mistakes vs. the more
+common "missing a check before doing X" pattern. Second, a genuine false
+**BLOCK**: a URL-path-concatenation rule in vercel/ai collided with an
+unrelated near-miss at 0.91. Reproducing that same rule fresh (fed the exact
+same code pair in isolation) scored a clean 0.97/0.10 — evidence this was
+generation variance in that one sampled near-miss, not a systematic flaw in
+short, one-line rules, though the false-block rate (2.3%) is still the
+correct number to quote, not 0%.
 
 For a fuller academic version of harness 1, swap `mineFixCommits` for
 `src/eval/apacheJitLoader.ts`, which loads the labeled ApacheJIT /
